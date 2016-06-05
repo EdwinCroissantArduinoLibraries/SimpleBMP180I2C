@@ -1,6 +1,10 @@
 #SimpleBMP180I2C library
 
-This is a bare bone BMP085/BMP180 Library using the the [I2C library from Wayne Truchsess] (https://github.com/rambo/I2C)
+This is a bare bone BMP085/BMP180 Library
+
+##Dependency
+
+This library uses the [I2C library from Wayne Truchsess] (https://github.com/rambo/I2C)
 The example compiles to about 436 bytes less code and 169 less dynamic memory compared to the Wire library and won't freeze when the sensor is disconnected.
 
 ##Usage
