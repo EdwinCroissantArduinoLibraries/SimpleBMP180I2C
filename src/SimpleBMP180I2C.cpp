@@ -71,15 +71,9 @@ int32_t SimpleBMP180I2C::getPressure(uint8_t mode) {
 	union {
 		int32_t int32;
 		struct {
-			uint8_t LSB, MSB;
+			uint8_t LLSB, LSB, MSB, MMSB;
 		};
-	} UT; //uncompensated temperature
-	union {
-		int32_t int32;
-		struct {
-			uint8_t XLSB, LSB, MSB;
-		};
-	} UP; // uncompensated pressure
+	} UT, UP; //uncompensated temperature and pressure
 
 	// clip the mode
 	if (mode > 3)
@@ -90,10 +84,13 @@ int32_t SimpleBMP180I2C::getPressure(uint8_t mode) {
 		goto onError;
 
 	delay(5);
+
 	if (I2c.read(I2CAddr, data, 2) != 0)
 		goto onError;
-	UT.MSB = I2c.receive();
+	UT.MMSB = 0;
+	UT.MSB = 0;
 	UT.LSB = I2c.receive();
+	UT.LLSB = I2c.receive();
 
 	// Calculate the temperature
 
@@ -121,9 +118,10 @@ int32_t SimpleBMP180I2C::getPressure(uint8_t mode) {
 	}
 	if (I2c.read(I2CAddr, data, 3) != 0)
 		goto onError;
+	UP.MMSB = 0;
 	UP.MSB = I2c.receive();
 	UP.LSB = I2c.receive();
-	UP.XLSB = I2c.receive();
+	UP.LLSB = I2c.receive();
 	UP.int32 >>= (8 - mode);
 
 	// and calculate the pressure
